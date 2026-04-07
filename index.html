@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>اجتماع شباب المنتزه</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            direction: rtl;
+            text-align: right;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 500px;
+            margin: auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .name {
+            display: flex;
+            justify-content: space-between;
+            margin: 6px 0;
+            padding: 6px;
+            border-bottom: 1px solid #eee;
+        }
+        .btn {
+            margin-top: 10px;
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+        .save { background: #4CAF50; color: white; }
+        .show { background: #2196F3; color: white; }
+
+        .absent-box {
+            margin-top: 20px;
+            padding: 10px;
+            background: #fff3f3;
+            border-radius: 8px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>اجتماع شباب المنتزه</h1>
+
+    <div id="list"></div>
+
+    <button class="btn save" onclick="saveData()">💾 حفظ</button>
+    <button class="btn show" onclick="showAbsent()">📋 عرض الغياب</button>
+
+    <div class="absent-box" id="absentBox">
+        <h3>الغياب:</h3>
+        <ul id="absentList"></ul>
+    </div>
+</div>
+
+<script>
+const names = [
+"امين يعقوب","اميل جرجس","ايمان هارون",
+"بسنت ميلاد","بولا وجدي",
+"تيمو صبحي",
+"جوفاني هاي","جوفاني هاني","جرجس سامي","جوي يوسف",
+"دينا جرجس",
+"راجي البير","راني جون","ريمون ماجد",
+"سارة بطرس","سارة طلعت","ساندرا مدحت","سامح عايد",
+"صمويل رافت","صمويل سامح",
+"فادي صفوت","فادي هاني",
+"كيرو هاني","كيكو نعيم",
+"لورا جميل",
+"مارينا جمعة","مارينا سمير","ماريو صاحب جوفاني","مارتن اميل","ماثيو مدحت","مجدي ميخائيل","مينا بشارة",
+"نادر فوزي",
+"يوسف ايمن"
+];
+
+// إنشاء القائمة
+const listDiv = document.getElementById("list");
+
+names.forEach((name, i) => {
+    listDiv.innerHTML += `
+        <div class="name">
+            <span>${name}</span>
+            <input type="checkbox" id="n${i}">
+        </div>
+    `;
+});
+
+// تحميل البيانات
+window.onload = function() {
+    names.forEach((_, i) => {
+        if(localStorage.getItem("cb"+i) === "true"){
+            document.getElementById("n"+i).checked = true;
+        }
+    });
+}
+
+// حفظ
+function saveData(){
+    names.forEach((_, i) => {
+        localStorage.setItem("cb"+i, document.getElementById("n"+i).checked);
+    });
+    alert("تم الحفظ ✅");
+}
+
+// عرض الغياب
+function showAbsent(){
+    const ul = document.getElementById("absentList");
+    ul.innerHTML = "";
+
+    names.forEach((name, i) => {
+        if(!document.getElementById("n"+i).checked){
+            ul.innerHTML += `<li>${name}</li>`;
+        }
+    });
+
+    document.getElementById("absentBox").style.display = "block";
+}
+</script>
+
+</body>
+</html>
