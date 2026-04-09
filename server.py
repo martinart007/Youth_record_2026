@@ -22,23 +22,33 @@ def init_db():
     conn.commit()
     conn.close()
 
-init_db()
-
-@app.route("/save", methods=["POST"])
-def save():
-    data = request.json
-
+def init_db():
     conn = connect_db()
     cursor = conn.cursor()
 
-    cursor.execute("SELECT name FROM people")
-    all_people = [row[0] for row in cursor.fetchall()]
+    # إنشاء الجدول
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS people (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT UNIQUE,
+        attended INTEGER DEFAULT 0,
+        absent INTEGER DEFAULT 0
+    )
+    ''')
 
-    for person in all_people:
-        if person in data:
-            cursor.execute("UPDATE people SET attended = attended + 1 WHERE name=?", (person,))
-        else:
-            cursor.execute("UPDATE people SET absent = absent + 1 WHERE name=?", (person,))
+    # 👇 هنا تحط الأسماء
+    names = [
+        "امين يعقوب",
+        "اميل جرجس",
+        "ايمان داود",
+        "بسنت ميلاد",
+        "بولا وجدي",
+        "تيمو صبحي"
+    ]
+
+    # 👇 وهنا السطر اللي بتسأل عليه
+    for name in names:
+        cursor.execute("INSERT OR IGNORE INTO people (name) VALUES (?)", (name,))
 
     conn.commit()
     conn.close()
