@@ -129,14 +129,19 @@ function saveData(){
     },
     body: JSON.stringify(selectedNames)
 })
-    .then(res => res.json())
-    .then(data => {
-        alert("تم الحفظ وربطه بالداتا بيز ✅🔥");
-    })
-    .catch(err => {
-        alert("اتحفظ بس محلي ❗ السيرفر مش شغال");
-    });
-}
+.then(res => {
+    if (!res.ok) {
+        throw new Error("Server error");
+    }
+    return res.json();
+})
+.then(data => {
+    alert("تم الحفظ وربطه بالداتا بيز ✅🔥");
+})
+.catch(err => {
+    console.log(err);
+    alert("اتحفظت بس محلي ❗ السيرفر مش شغال");
+});
 
 // عرض الغياب
 function showAbsent(){
