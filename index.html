@@ -123,12 +123,12 @@ function saveData(){
 
     // إرسال للـ backend
     fetch("https://youthrecord2026-production.up.railway.app/save", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(selectedNames)
-    })
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify(selectedNames)
+})
     .then(res => res.json())
     .then(data => {
         alert("تم الحفظ وربطه بالداتا بيز ✅🔥");
