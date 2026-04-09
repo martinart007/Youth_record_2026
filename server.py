@@ -90,3 +90,30 @@ if __name__ == "__main__":
 @app.route("/")
 def home():
     return "Server is running"
+
+@app.route("/save", methods=["POST"])
+def save():
+    data = request.json
+
+    conn = connect_db()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT name FROM people")
+    all_people = [row[0] for row in cursor.fetchall()]
+
+    for person in all_people:
+        if person in data:
+            cursor.execute(
+                "UPDATE people SET attended = attended + 1 WHERE name=?",
+                (person,)
+            )
+        else:
+            cursor.execute(
+                "UPDATE people SET absent = absent + 1 WHERE name=?",
+                (person,)
+            )
+
+    conn.commit()
+    conn.close()
+
+    return jsonify({"message": "Saved"})
