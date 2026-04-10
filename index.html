@@ -107,10 +107,36 @@ window.onload = function() {
 
 // حفظ
 function saveData(){
-    names.forEach((_, i) => {
-        localStorage.setItem("cb"+i, document.getElementById("n"+i).checked);
+    let selectedNames = [];
+
+    names.forEach((name, i) => {
+        const isChecked = document.getElementById("n"+i).checked;
+
+        if(isChecked){
+            selectedNames.push(name);
+        }
     });
-    alert("تم الحفظ ✅");
+
+    fetch("https://youthrecord2026-production.up.railway.app/save", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(selectedNames)
+    })
+    .then(res => {
+        if (!res.ok) {
+            throw new Error("Server error");
+        }
+        return res.json();
+    })
+    .then(data => {
+        alert("🔥 اتحفظ في الداتا بيز");
+    })
+    .catch(err => {
+        console.log(err);
+        alert("❌ السيرفر مش شغال");
+    });
 }
 
 // عرض الغياب
