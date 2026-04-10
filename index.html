@@ -67,7 +67,6 @@
 </div>
 
 <script>
-alert("JS شغال");
 const names = [
 "امين يعقوب","اميل جرجس","ايمان هارون",
 "بسنت ميلاد","بولا وجدي",
@@ -89,10 +88,12 @@ const names = [
 const listDiv = document.getElementById("list");
 
 names.forEach((name, i) => {
-    listDiv.innerHTML += "<div class='name'>" +
-    "<span>" + name + "</span>" +
-    "<input type='checkbox' id='n" + i + "'>" +
-"</div>";
+    listDiv.innerHTML += `
+        <div class="name">
+            <span>${name}</span>
+            <input type="checkbox" id="n${i}">
+        </div>
+    `;
 });
 
 // تحميل البيانات
@@ -106,41 +107,11 @@ window.onload = function() {
 
 // حفظ
 function saveData(){
-    let selectedNames = [];
-
-    names.forEach((name, i) => {
-        const isChecked = document.getElementById("n"+i).checked;
-
-        // حفظ local (زي ما هو)
-        localStorage.setItem("cb"+i, isChecked);
-
-        // نجمع الحضور
-        if(isChecked){
-            selectedNames.push(name);
-        }
+    names.forEach((_, i) => {
+        localStorage.setItem("cb"+i, document.getElementById("n"+i).checked);
     });
-
-    // إرسال للـ backend
-    fetch("https://youthrecord2026-production.up.railway.app/save", {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify(selectedNames)
-})
-.then(res => {
-    if (!res.ok) {
-        throw new Error("Server error");
-    }
-    return res.json();
-})
-.then(data => {
-    alert("تم الحفظ وربطه بالداتا بيز ✅🔥");
-})
-.catch(err => {
-    console.log(err);
-    alert("اتحفظت بس محلي ❗ السيرفر مش شغال");
-});
+    alert("تم الحفظ ✅");
+}
 
 // عرض الغياب
 function showAbsent(){
