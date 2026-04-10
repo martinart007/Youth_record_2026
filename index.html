@@ -146,9 +146,13 @@ function showAbsent(){
             ul.innerHTML += `<li>${name}</li>`;
         }
     });
+
+    document.getElementById("absentBox").style.display = "block";
+}
+</script>
+<script>
 function loadStats(){
-alert("function شغالة");
-    fetch("https://youthrecord2026-production.up.railway.app/stats")
+    ("https://youthrecord2026-production.up.railway.app/stats")
     .then(res => res.json())
     .then(data => {
 
@@ -178,8 +182,6 @@ alert("function شغالة");
         alert("❌ مش قادر يجيب الداتا");
         console.log(err);
     });
-}
-    document.getElementById("absentBox").style.display = "block";
 }
 </script>
 
