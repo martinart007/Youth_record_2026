@@ -5,79 +5,41 @@ import sqlite3
 app = Flask(__name__)
 CORS(app)
 
+# الاتصال بالداتا بيز
 def connect_db():
     return sqlite3.connect("attendance.db")
 
+# إنشاء الجدول + إضافة الأسماء
 def init_db():
     conn = connect_db()
     cursor = conn.cursor()
-    cursor.execute('''
+
+    cursor.execute("""
         CREATE TABLE IF NOT EXISTS people (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT,
+            name TEXT UNIQUE,
             attended INTEGER DEFAULT 0,
             absent INTEGER DEFAULT 0
         )
-    ''')
-    conn.commit()
-    conn.close()
+    """)
 
-
-    # 👇 هنا تحط الأسماء
+    # 👇 حط الأسماء هنا
     names = [
-"امين يعقوب","اميل جرجس","ايمان هارون",
-"بسنت ميلاد","بولا وجدي",
-"تيمو صبحي",
-"جوفاني هاي","جوفاني هاني","جرجس سامي","جوي يوسف",
-"دينا جرجس",
-"راجي البير","راني جون","ريمون ماجد",
-"سارة بطرس","سارة طلعت","ساندرا مدحت","سامح عايد",
-"صمويل رافت","صمويل سامح",
-"فادي صفوت","فادي هاني",
-"كيرو هاني","كيكو نعيم",
-"لورا جميل",
-"مارينا جمعة","مارينا سمير","ماريو صاحب جوفاني","مارتن اميل","ماثيو مدحت","مجدي ميخائيل","مينا بشارة",
-"نادر فوزي",
-"يوسف ايمن"
-]
+       
+    ]
 
-    # 👇 وهنا السطر اللي بتسأل عليه
     for name in names:
         cursor.execute("INSERT OR IGNORE INTO people (name) VALUES (?)", (name,))
 
     conn.commit()
     conn.close()
 
-    return jsonify({"message": "Saved"})
-
-@app.route("/stats")
-def stats():
-    conn = connect_db()
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT name, attended, absent FROM people")
-    result = cursor.fetchall()
-
-    data = []
-    for name, attended, absent in result:
-        total = attended + absent
-        percent = (attended / total * 100) if total > 0 else 0
-        data.append({
-            "name": name,
-            "attendance": attended,
-            "absence": absent,
-            "percentage": round(percent, 2)
-        })
-
-    conn.close()
-    return jsonify(data)
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+# الصفحة الرئيسية
 @app.route("/")
 def home():
     return "Server is running"
 
+# حفظ الحضور
 @app.route("/save", methods=["POST"])
 def save():
     data = request.json
@@ -103,4 +65,33 @@ def save():
     conn.commit()
     conn.close()
 
-    return jsonify({"message": "Saved"})
+    return jsonify({"message": "Saved successfully"})
+
+# عرض الإحصائيات
+@app.route("/stats")
+def stats():
+    conn = connect_db()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT name, attended, absent FROM people")
+    result = cursor.fetchall()
+
+    data = []
+    for name, attended, absent in result:
+        total = attended + absent
+        percent = (attended / total * 100) if total > 0 else 0
+
+        data.append({
+            "name": name,
+            "attendance": attended,
+            "absence": absent,
+            "percentage": round(percent, 2)
+        })
+
+    conn.close()
+    return jsonify(data)
+
+# 👇 أهم حاجة: دي آخر سطر
+if __name__ == "__main__":
+    init_db()  # إنشاء الداتا بيز أول مرة
+    app.run(host="0.0.0.0", port=10000)
