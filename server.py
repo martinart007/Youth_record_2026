@@ -53,30 +53,38 @@ def home():
 # حفظ الحضور
 @app.route("/save", methods=["POST"])
 def save():
-    data = request.json
+    try:
+        data = request.get_json()
 
-    conn = connect_db()
-    cursor = conn.cursor()
+        if not data or not isinstance(data, list):
+            return jsonify({"error": "Invalid data"}), 400
 
-    cursor.execute("SELECT name FROM people")
-    all_people = [row[0] for row in cursor.fetchall()]
+        conn = connect_db()
+        cursor = conn.cursor()
 
-    for person in all_people:
-        if person in data:
-            cursor.execute(
-                "UPDATE people SET attended = attended + 1 WHERE name=?",
-                (person,)
-            )
-        else:
-            cursor.execute(
-                "UPDATE people SET absent = absent + 1 WHERE name=?",
-                (person,)
-            )
+        cursor.execute("SELECT name FROM people")
+        all_people = [row[0] for row in cursor.fetchall()]
 
-    conn.commit()
-    conn.close()
+        for person in all_people:
+            if person in data:
+                cursor.execute(
+                    "UPDATE people SET attended = attended + 1 WHERE name=?",
+                    (person,)
+                )
+            else:
+                cursor.execute(
+                    "UPDATE people SET absent = absent + 1 WHERE name=?",
+                    (person,)
+                )
 
-    return jsonify({"message": "Saved successfully"})
+        conn.commit()
+        conn.close()
+
+        return jsonify({"message": "Saved successfully"})
+
+    except Exception as e:
+        print("ERROR:", e)
+        return jsonify({"error": str(e)}), 500
 
 # عرض الإحصائيات
 @app.route("/stats")
