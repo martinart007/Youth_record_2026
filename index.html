@@ -88,12 +88,10 @@ const names = [
 const listDiv = document.getElementById("list");
 
 names.forEach((name, i) => {
-    listDiv.innerHTML += `
-    <div class="name">
-        <span>${name}</span>
-        <input type="checkbox" id="n${i}">
-    </div>
-`;
+    listDiv.innerHTML += "<div class='name'>" +
+    "<span>" + name + "</span>" +
+    "<input type='checkbox' id='n" + i + "'>" +
+"</div>";
 });
 
 // تحميل البيانات
