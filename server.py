@@ -22,19 +22,6 @@ def init_db():
     conn.commit()
     conn.close()
 
-def init_db():
-    conn = connect_db()
-    cursor = conn.cursor()
-
-    # إنشاء الجدول
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS people (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT UNIQUE,
-        attended INTEGER DEFAULT 0,
-        absent INTEGER DEFAULT 0
-    )
-    ''')
 
     # 👇 هنا تحط الأسماء
     names = [
