@@ -65,6 +65,8 @@
         <ul id="absentList"></ul>
     </div>
 </div>
+<div id="statsBox" style="display:none; margin-top:20px;"></div>
+<button onclick="loadStats()">📊 عرض الإحصائيات</button>
 
 <script>
 const names = [
@@ -144,7 +146,38 @@ function showAbsent(){
             ul.innerHTML += `<li>${name}</li>`;
         }
     });
+function loadStats(){
+    fetch("https://youthrecord2026-production.up.railway.app/stats")
+    .then(res => res.json())
+    .then(data => {
 
+        let box = document.getElementById("statsBox");
+        box.style.display = "block";
+
+        box.innerHTML = "";
+
+        data.forEach(person => {
+            box.innerHTML += `
+                <div style="
+                    background:#f3f3f3;
+                    padding:10px;
+                    margin:10px 0;
+                    border-radius:8px;
+                ">
+                    <strong>${person.name}</strong><br>
+                    حضور: ${person.attendance} |
+                    غياب: ${person.absence} <br>
+                    النسبة: ${person.percentage}%
+                </div>
+            `;
+        });
+
+    })
+    .catch(err => {
+        alert("❌ مش قادر يجيب الداتا");
+        console.log(err);
+    });
+}
     document.getElementById("absentBox").style.display = "block";
 }
 </script>
