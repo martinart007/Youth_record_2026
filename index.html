@@ -129,8 +129,7 @@ function saveData(){
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify(selectedNames)
-    })
+        body: JSON.stringify({ names: selectedNames })
     .then(res => res.json())
     .then(data => {
         alert("🔥 اتحفظ في الداتا بيز");
