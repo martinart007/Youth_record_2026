@@ -96,9 +96,17 @@ def stats():
     result = cursor.fetchall()
 
     data = []
-    for name, attended, absent in result:
+    for row in result:
+        name = row[0]
+        attended = row[1] or 0
+        absent = row[2] or 0
+
         total = attended + absent
-        percent = (attended / total * 100) if total > 0 else 0
+
+        if total == 0:
+            percent = 0
+        else:
+            percent = (attended / total) * 100
 
         data.append({
             "name": name,
@@ -109,7 +117,6 @@ def stats():
 
     conn.close()
     return jsonify(data)
-
 # 👇 أهم حاجة: دي آخر سطر
 if __name__ == "__main__":
     init_db()  # إنشاء الداتا بيز أول مرة
