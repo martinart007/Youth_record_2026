@@ -21,7 +21,7 @@
             background: white;
             padding: 20px;
             border-radius: 10px;
-            width: 100%; /* 👈 يخليها بعرض الصفحة */
+            width: 100%;
             box-sizing: border-box;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
@@ -57,6 +57,7 @@
         .present-box { background: #e8f5e9; }
         .absent-box { background: #fff3f3; }
 
+        /* 🔥 التعديل هنا فقط */
         .search {
             width: 100%;
             padding: 10px;
@@ -64,7 +65,13 @@
             border-radius: 8px;
             border: 1px solid #ccc;
             font-size: 14px;
+            box-sizing: border-box;   /* 👈 مهم جدًا */
         }
+
+        .search-wrapper {
+            padding: 0 20px; /* 👈 يخليه بعيد عن الحواف ويبقى في النص */
+        }
+
     </style>
 </head>
 <body>
@@ -72,21 +79,16 @@
 <div class="container">
     <h1>اجتماع شباب المنتزه</h1>
 
-    <input 
-        type="text" 
-        id="searchInput" 
-        class="search. {
-    width: 60%;        /* أو 50% حسب ما تحب */
-    padding: 10px;
-    margin: 0 auto 10px auto;  /* 👈 ده اللي بيخليه في النص */
-    display: block;            /* 👈 مهم */
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 14px;
-}" 
-        placeholder="🔍 ابحث عن اسم..."
-        onkeyup="filterNames()"
-    >
+    <!-- 🔥 لفينا السيرش في div -->
+    <div class="search-wrapper">
+        <input 
+            type="text" 
+            id="searchInput" 
+            class="search" 
+            placeholder="🔍 ابحث عن اسم..."
+            onkeyup="filterNames()"
+        >
+    </div>
 
     <div id="list"></div>
 
