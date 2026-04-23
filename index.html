@@ -38,16 +38,18 @@
             font-size: 15px;
             cursor: pointer;
         }
-        .save { background: #4CAF50; color: white; }
-        .show { background: #2196F3; color: white; }
+        .present { background: #4CAF50; color: white; }
+        .absent { background: #2196F3; color: white; }
 
-        .absent-box {
+        .box {
             margin-top: 20px;
             padding: 10px;
-            background: #fff3f3;
             border-radius: 8px;
             display: none;
         }
+
+        .present-box { background: #e8f5e9; }
+        .absent-box { background: #fff3f3; }
     </style>
 </head>
 <body>
@@ -57,16 +59,19 @@
 
     <div id="list"></div>
 
-    <button class="btn save" onclick="saveData()">💾 حفظ</button>
-    <button class="btn show" onclick="showAbsent()">📋 عرض الغياب</button>
+    <button class="btn present" onclick="showPresent()">✅ عرض الحضور</button>
+    <button class="btn absent" onclick="showAbsent()">📋 عرض الغياب</button>
 
-    <div class="absent-box" id="absentBox">
+    <div class="box present-box" id="presentBox">
+        <h3>الحضور:</h3>
+        <ul id="presentList"></ul>
+    </div>
+
+    <div class="box absent-box" id="absentBox">
         <h3>الغياب:</h3>
         <ul id="absentList"></ul>
     </div>
 </div>
-<div id="statsBox" style="display:none; margin-top:20px;"></div>
-<button onclick="loadStats()">📊 عرض الإحصائيات</button>
 
 <script>
 const names = [
@@ -98,49 +103,22 @@ names.forEach((name, i) => {
     `;
 });
 
-// تحميل من localStorage
-window.onload = function() {
-    names.forEach((_, i) => {
-        if(localStorage.getItem("cb"+i) === "true"){
-            document.getElementById("n"+i).checked = true;
-        }
-    });
-};
-
-// ✅ حفظ
-function saveData(){
-    let selectedNames = [];
+// عرض الحضور
+function showPresent(){
+    const ul = document.getElementById("presentList");
+    ul.innerHTML = "";
 
     names.forEach((name, i) => {
-        const checkbox = document.getElementById("n"+i);
-        const isChecked = checkbox.checked;
-
-        // حفظ محلي
-        localStorage.setItem("cb"+i, isChecked);
-
-        if(isChecked){
-            selectedNames.push(name);
+        if(document.getElementById("n"+i).checked){
+            ul.innerHTML += `<li>${name}</li>`;
         }
     });
 
-    // إرسال للسيرفر
-    fetch("https://youthrecord2026-production.up.railway.app/save", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ names: selectedNames })
-    .then(res => res.json())
-    .then(data => {
-        alert("🔥 اتحفظ في الداتا بيز");
-    })
-    .catch(err => {
-        alert("❌ السيرفر مش شغال");
-        console.log(err);
-    });
+    document.getElementById("presentBox").style.display = "block";
+    document.getElementById("absentBox").style.display = "none";
 }
 
-// ✅ عرض الغياب
+// عرض الغياب
 function showAbsent(){
     const ul = document.getElementById("absentList");
     ul.innerHTML = "";
@@ -152,39 +130,9 @@ function showAbsent(){
     });
 
     document.getElementById("absentBox").style.display = "block";
-}
-
-// ✅ الإحصائيات
-function loadStats(){
-    fetch("https://youthrecord2026-production.up.railway.app/stats")
-    .then(res => res.json())
-    .then(data => {
-
-        let box = document.getElementById("statsBox");
-        box.style.display = "block";
-        box.innerHTML = "";
-
-        data.forEach(person => {
-            box.innerHTML += `
-                <div style="background:#f3f3f3;padding:10px;margin:10px 0;border-radius:8px;">
-                    <b>${person.name}</b><br>
-                    حضور: ${person.attendance} |
-                    غياب: ${person.absence}<br>
-                    النسبة: ${person.percentage}%
-                </div>
-            `;
-        });
-
-    })
-    .catch(err => {
-        alert("❌ مش قادر يجيب الداتا");
-        console.log(err);
-    });
+    document.getElementById("presentBox").style.display = "none";
 }
 </script>
-
-
-
 
 </body>
 </html>
