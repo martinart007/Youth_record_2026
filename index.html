@@ -119,15 +119,10 @@ function loadStats(){
 
         data.forEach(person => {
             box.innerHTML += `
-                <div style="
-                    background:#f3f3f3;
-                    padding:10px;
-                    margin:10px 0;
-                    border-radius:8px;
-                ">
-                    <strong>${person.name}</strong><br>
+                <div>
+                    <b>${person.name}</b><br>
                     حضور: ${person.attendance} |
-                    غياب: ${person.absence} <br>
+                    غياب: ${person.absence}<br>
                     النسبة: ${person.percentage}%
                 </div>
             `;
