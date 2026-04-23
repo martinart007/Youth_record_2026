@@ -75,7 +75,15 @@
     <input 
         type="text" 
         id="searchInput" 
-        class="search" 
+        class="search. {
+    width: 60%;        /* أو 50% حسب ما تحب */
+    padding: 10px;
+    margin: 0 auto 10px auto;  /* 👈 ده اللي بيخليه في النص */
+    display: block;            /* 👈 مهم */
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}" 
         placeholder="🔍 ابحث عن اسم..."
         onkeyup="filterNames()"
     >
