@@ -5,11 +5,11 @@ import sqlite3
 app = Flask(__name__)
 CORS(app)
 
-# الاتصال بالداتا بيز
+# اتصال الداتا بيز
 def connect_db():
     return sqlite3.connect("attendance.db")
 
-# إنشاء الجدول + إضافة الأسماء
+# إنشاء الجدول + إدخال الأسماء
 def init_db():
     conn = connect_db()
     cursor = conn.cursor()
@@ -23,21 +23,18 @@ def init_db():
         )
     """)
 
-    # 👇 حط الأسماء هنا
-    names = [ "امين يعقوب","اميل جرجس","ايمان هارون",
-"بسنت ميلاد","بولا وجدي",
-"تيمو صبحي",
-"جوفاني هاي","جوفاني هاني","جرجس سامي","جوي يوسف",
-"دينا جرجس",
-"راجي البير","راني جون","ريمون ماجد",
-"سارة بطرس","سارة طلعت","ساندرا مدحت","سامح عايد",
-"صمويل رافت","صمويل سامح",
-"فادي صفوت","فادي هاني",
-"كيرو هاني","كيكو نعيم",
-"لورا جميل",
-"مارينا جمعة","مارينا سمير","ماريو صاحب جوفاني","مارتن اميل","ماثيو مدحت","مجدي ميخائيل","مينا بشارة",
-"نادر فوزي",
-"يوسف ايمن" ]
+    names = [
+        "امين يعقوب","اميل جرجس","ايمان هارون",
+        "بسنت ميلاد","بولا وجدي","تيمو صبحي",
+        "جوفاني هاي","جوفاني هاني","جرجس سامي","جوي يوسف",
+        "دينا جرجس","راجي البير","راني جون","ريمون ماجد",
+        "سارة بطرس","سارة طلعت","ساندرا مدحت","سامح عايد",
+        "صمويل رافت","صمويل سامح","فادي صفوت","فادي هاني",
+        "كيرو هاني","كيكو نعيم","لورا جميل",
+        "مارينا جمعة","مارينا سمير","ماريو صاحب جوفاني","مارتن اميل",
+        "ماثيو مدحت","مجدي ميخائيل","مينا بشارة",
+        "نادر فوزي","يوسف ايمن"
+    ]
 
     for name in names:
         cursor.execute("INSERT OR IGNORE INTO people (name) VALUES (?)", (name,))
@@ -50,43 +47,38 @@ def init_db():
 def home():
     return "Server is running"
 
-# حفظ الحضور
+# حفظ البيانات
 @app.route("/save", methods=["POST"])
 def save():
-    try:
-        data = request.get_json()
+    data = request.json
 
-        if not data or not isinstance(data, list):
-            return jsonify({"error": "Invalid data"}), 400
+    if not isinstance(data, list):
+        return jsonify({"error": "Invalid data"}), 400
 
-        conn = connect_db()
-        cursor = conn.cursor()
+    conn = connect_db()
+    cursor = conn.cursor()
 
-        cursor.execute("SELECT name FROM people")
-        all_people = [row[0] for row in cursor.fetchall()]
+    cursor.execute("SELECT name FROM people")
+    all_people = [row[0] for row in cursor.fetchall()]
 
-        for person in all_people:
-            if person in data:
-                cursor.execute(
-                    "UPDATE people SET attended = attended + 1 WHERE name=?",
-                    (person,)
-                )
-            else:
-                cursor.execute(
-                    "UPDATE people SET absent = absent + 1 WHERE name=?",
-                    (person,)
-                )
+    for person in all_people:
+        if person in data:
+            cursor.execute(
+                "UPDATE people SET attended = attended + 1 WHERE name=?",
+                (person,)
+            )
+        else:
+            cursor.execute(
+                "UPDATE people SET absent = absent + 1 WHERE name=?",
+                (person,)
+            )
 
-        conn.commit()
-        conn.close()
+    conn.commit()
+    conn.close()
 
-        return jsonify({"message": "Saved successfully"})
+    return jsonify({"message": "Saved"})
 
-    except Exception as e:
-        print("ERROR:", e)
-        return jsonify({"error": str(e)}), 500
-
-# عرض الإحصائيات
+# الإحصائيات
 @app.route("/stats")
 def stats():
     conn = connect_db()
@@ -102,11 +94,7 @@ def stats():
         absent = row[2] or 0
 
         total = attended + absent
-
-        if total == 0:
-            percent = 0
-        else:
-            percent = (attended / total) * 100
+        percent = (attended / total * 100) if total > 0 else 0
 
         data.append({
             "name": name,
@@ -117,7 +105,8 @@ def stats():
 
     conn.close()
     return jsonify(data)
-# 👇 أهم حاجة: دي آخر سطر
+
+# تشغيل السيرفر
 if __name__ == "__main__":
-    init_db()  # إنشاء الداتا بيز أول مرة
+    init_db()
     app.run(host="0.0.0.0", port=10000)
