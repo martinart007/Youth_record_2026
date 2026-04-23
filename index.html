@@ -108,50 +108,8 @@ window.onload = function() {
 }
 
 // حفظ
-function saveData(){
-    let selectedNames = [];
-
-    names.forEach((name, i) => {
-        const isChecked = document.getElementById("n"+i).checked;
-
-        if(isChecked){
-            selectedNames.push(name);
-        }
-    });
-
-    fetch("https://youthrecord2026-production.up.railway.app/save", {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify(selectedNames)
-})
-.then(res => res.json())
-.then(data => {
-    alert("🔥 اتحفظ في الداتا بيز");
-})
-.catch(err => {
-    console.log(err);
-    alert("❌ السيرفر مش شغال");
-});
-}
-
-// عرض الغياب
-function showAbsent(){
-    const ul = document.getElementById("absentList");
-    ul.innerHTML = "";
-
-    names.forEach((name, i) => {
-        if(!document.getElementById("n"+i).checked){
-            ul.innerHTML += `<li>${name}</li>`;
-        }
-    });
-
-    document.getElementById("absentBox").style.display = "block";
-}
-
 function loadStats(){
-    ("https://youthrecord2026-production.up.railway.app/stats")
+    fetch("https://youthrecord2026-production.up.railway.app/stats")
     .then(res => res.json())
     .then(data => {
 
