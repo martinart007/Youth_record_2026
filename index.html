@@ -98,16 +98,64 @@ names.forEach((name, i) => {
     `;
 });
 
-// تحميل البيانات
+// تحميل من localStorage
 window.onload = function() {
     names.forEach((_, i) => {
         if(localStorage.getItem("cb"+i) === "true"){
             document.getElementById("n"+i).checked = true;
         }
     });
+};
+
+// ✅ حفظ
+function saveData(){
+    let selectedNames = [];
+
+    names.forEach((name, i) => {
+        const checkbox = document.getElementById("n"+i);
+        const isChecked = checkbox.checked;
+
+        // حفظ محلي
+        localStorage.setItem("cb"+i, isChecked);
+
+        if(isChecked){
+            selectedNames.push(name);
+        }
+    });
+
+    // إرسال للسيرفر
+    fetch("https://youthrecord2026-production.up.railway.app/save", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(selectedNames)
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert("🔥 اتحفظ في الداتا بيز");
+    })
+    .catch(err => {
+        alert("❌ السيرفر مش شغال");
+        console.log(err);
+    });
 }
 
-// حفظ
+// ✅ عرض الغياب
+function showAbsent(){
+    const ul = document.getElementById("absentList");
+    ul.innerHTML = "";
+
+    names.forEach((name, i) => {
+        if(!document.getElementById("n"+i).checked){
+            ul.innerHTML += `<li>${name}</li>`;
+        }
+    });
+
+    document.getElementById("absentBox").style.display = "block";
+}
+
+// ✅ الإحصائيات
 function loadStats(){
     fetch("https://youthrecord2026-production.up.railway.app/stats")
     .then(res => res.json())
@@ -119,7 +167,7 @@ function loadStats(){
 
         data.forEach(person => {
             box.innerHTML += `
-                <div>
+                <div style="background:#f3f3f3;padding:10px;margin:10px 0;border-radius:8px;">
                     <b>${person.name}</b><br>
                     حضور: ${person.attendance} |
                     غياب: ${person.absence}<br>
