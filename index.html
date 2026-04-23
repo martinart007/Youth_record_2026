@@ -50,12 +50,31 @@
 
         .present-box { background: #e8f5e9; }
         .absent-box { background: #fff3f3; }
+
+        /* 🔍 شكل البحث */
+        .search {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h1>اجتماع شباب المنتزه</h1>
+
+    <!-- 🔍 مربع البحث -->
+    <input 
+        type="text" 
+        id="searchInput" 
+        class="search" 
+        placeholder="🔍 ابحث عن اسم..."
+        onkeyup="filterNames()"
+    >
 
     <div id="list"></div>
 
@@ -96,12 +115,28 @@ const listDiv = document.getElementById("list");
 
 names.forEach((name, i) => {
     listDiv.innerHTML += `
-        <div class="name">
+        <div class="name" data-name="${name}">
             <span>${name}</span>
             <input type="checkbox" id="n${i}">
         </div>
     `;
 });
+
+// 🔍 فلترة الأسماء
+function filterNames(){
+    const searchValue = document.getElementById("searchInput").value.toLowerCase();
+    const items = document.querySelectorAll(".name");
+
+    items.forEach(item => {
+        const name = item.getAttribute("data-name").toLowerCase();
+
+        if(name.includes(searchValue)){
+            item.style.display = "flex";
+        } else {
+            item.style.display = "none";
+        }
+    });
+}
 
 // عرض الحضور
 function showPresent(){
