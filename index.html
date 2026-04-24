@@ -87,6 +87,7 @@ input[type="checkbox"]{
 <button class="btn present" onclick="showPresent()">عرض الحضور</button>
 <button class="btn absent" onclick="showAbsent()">عرض الغياب</button>
 <button class="btn stats" onclick="showStats()">📊 الإحصائيات</button>
+<button class="btn" onclick="resetStats()">🗑️ تصفير الإحصائيات</button>
 
 <div id="presentBox" class="box present-box">
 <h3>الحضور</h3>
@@ -208,6 +209,11 @@ function showStats(){
 function showBox(id){
     document.querySelectorAll(".box").forEach(b=>b.style.display="none");
     document.getElementById(id).style.display="block";
+}
+
+function resetStats(){
+    localStorage.clear();
+    alert("تم تصفير الإحصائيات ✅");
 }
 
 </script>
