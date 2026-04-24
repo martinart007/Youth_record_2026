@@ -26,13 +26,15 @@ h1 {
 }
 
 .search {
-    width:100%;
-    padding:10px;
-    margin-bottom:10px;
-    border-radius:8px;
-    border:1px solid #ccc;
+    width: calc(100% - 30px); /* 👈 يقلل عرضه شوية */
+    padding: 10px;
+    margin: 0 auto 10px auto; /* 👈 يخليه في النص */
+    display: block;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    box-sizing: border-box;
 }
-
 .name {
     display:flex;
     justify-content:space-between;
