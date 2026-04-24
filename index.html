@@ -1,218 +1,213 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>اجتماع شباب المنتزه</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            direction: rtl;
-            text-align: right;
-            background-color: #f5f5f5;
-            margin: 0;
-            padding: 20px;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        h1 {
-            text-align: center;
-        }
+<title>اجتماع شباب المنتزه</title>
 
-        .container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            width: 100%;
-            box-sizing: border-box;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
+<style>
+body {
+    font-family: Arial;
+    direction: rtl;
+    background:#f5f5f5;
+    margin:0;
+    padding:15px;
+}
 
-        .name {
-            display: flex;
-            justify-content: space-between;
-            margin: 6px 0;
-            padding: 6px;
-            border-bottom: 1px solid #eee;
-        }
+h1 {
+    text-align:center;
+}
 
-        .btn {
-            margin-top: 10px;
-            width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 8px;
-            font-size: 15px;
-            cursor: pointer;
-        }
+.container {
+    background:#fff;
+    padding:15px;
+    border-radius:10px;
+}
 
-        .present { background: #4CAF50; color: white; }
-        .absent { background: #2196F3; color: white; }
+.search {
+    width:100%;
+    padding:10px;
+    margin-bottom:10px;
+    border-radius:8px;
+    border:1px solid #ccc;
+}
 
-        .box {
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 8px;
-            display: none;
-        }
+.name {
+    display:flex;
+    justify-content:space-between;
+    padding:10px;
+    border-bottom:1px solid #eee;
+}
 
-        .present-box { background: #e8f5e9; }
-        .absent-box { background: #fff3f3; }
+input[type="checkbox"]{
+    transform:scale(1.3);
+}
 
-        /* 🔥 التعديل هنا فقط */
-        .search {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            font-size: 14px;
-            box-sizing: border-box;   /* 👈 مهم جدًا */
-        }
+.btn {
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border:none;
+    border-radius:8px;
+    font-size:15px;
+    cursor:pointer;
+}
 
-        .search-wrapper {
-            padding: 0 20px; /* 👈 يخليه بعيد عن الحواف ويبقى في النص */
-        }
+.present { background:#4CAF50;color:white; }
+.absent { background:#2196F3;color:white; }
+.stats { background:#9C27B0;color:white; }
 
-    </style>
+.box {
+    display:none;
+    margin-top:15px;
+    padding:10px;
+    border-radius:8px;
+}
+
+.present-box { background:#e8f5e9; }
+.absent-box { background:#fff3f3; }
+.stats-box { background:#f3e5f5; }
+
+</style>
 </head>
+
 <body>
 
 <div class="container">
-    <h1>اجتماع شباب المنتزه</h1>
 
-    <!-- 🔥 لفينا السيرش في div -->
-    <div class="search-wrapper">
-        <input 
-            type="text" 
-            id="searchInput" 
-            class="search" 
-            placeholder="🔍 ابحث عن اسم..."
-            onkeyup="filterNames()"
-        >
-    </div>
+<h1>اجتماع شباب المنتزه</h1>
 
-    <div id="list"></div>
+<input id="searchInput" class="search" placeholder="🔍 ابحث..." onkeyup="filterNames()">
 
-    <button class="btn present" onclick="showPresent()">✅ عرض الحضور</button>
-    <button class="btn absent" onclick="showAbsent()">📋 عرض الغياب</button>
+<div id="list"></div>
 
-    <div class="box present-box" id="presentBox">
-        <h3>الحضور:</h3>
-        <ul id="presentList"></ul>
-    </div>
+<button class="btn present" onclick="showPresent()">عرض الحضور</button>
+<button class="btn absent" onclick="showAbsent()">عرض الغياب</button>
+<button class="btn stats" onclick="showStats()">📊 الإحصائيات</button>
 
-    <div class="box absent-box" id="absentBox">
-        <h3>الغياب:</h3>
-        <ul id="absentList"></ul>
-    </div>
+<div id="presentBox" class="box present-box">
+<h3>الحضور</h3>
+<ul id="presentList"></ul>
+</div>
+
+<div id="absentBox" class="box absent-box">
+<h3>الغياب</h3>
+<ul id="absentList"></ul>
+</div>
+
+<div id="statsBox" class="box stats-box">
+<h3>الإحصائيات</h3>
+<ul id="statsList"></ul>
+</div>
+
 </div>
 
 <script>
+
 const names = [
-"أميره يوسف",
-"امين يعقوب",
-"اميل جرجس",
-"ايمان هارون",
-"بن يعقوب",
-"بسنت ميلاد",
-"بولا وجدي",
-"تيمو صبحي",
-"جوفاني هاي",
-"جوفاني هاني",
-"جرجس سامي",
-"جوي يوسف",
-"دينا جرجس",
-"راجي البير",
-"رامز بطرس",
-"راني جون",
-"راني عماد",
-"ريمون ماجد",
-"روان ناصر",
-"روز مجدي",
-"سارة بطرس",
-"سارة سعد",
-"سارة طلعت",
-"ساندرا رافت",
-"ساندرا مدحت",
-"ساندي مجدي",
-"سامح عايد",
-"صمويل رافت",
-"صمويل سامح",
-"صمويل ناصر",
-"فادي صفوت",
-"فادي هاني",
-"كيرو هاني",
-"كوكي جرس",
-"لورا جميل",
-"مارينا جمعة",
-"مارينا سمير",
-"ماريو",
-"ماريو صاحب جوفاني",
-"مارتن اميل",
-"ماثيو مدحت",
-"مجدي ميخائيل",
-"مينا بشارة",
-"ناير عماد",
-"نادر فوزي",
-"يوسف ايمن"
+"أميره يوسف","امين يعقوب","اميل جرجس","ايمان هارون",
+"بن يعقوب","بسنت ميلاد","بولا وجدي","تيمو صبحي",
+"جوفاني هاي","جوفاني هاني","جرجس سامي","جوي يوسف",
+"دينا جرجس","راجي البير","رامز بطرس","راني جون",
+"راني عماد","ريمون ماجد","روان ناصر","روز مجدي",
+"سارة بطرس","سارة سعد","سارة طلعت","ساندرا رافت",
+"ساندرا مدحت","ساندي مجدي","سامح عايد",
+"صمويل رافت","صمويل سامح","صمويل ناصر",
+"فادي صفوت","فادي هاني","كيرو هاني","كوكي جرس",
+"لورا جميل","مارينا جمعة","مارينا سمير",
+"ماريو","ماريو صاحب جوفاني","مارتن اميل",
+"ماثيو مدحت","مجدي ميخائيل","مينا بشارة",
+"ناير عماد","نادر فوزي","يوسف ايمن"
 ];
 
-// إنشاء القائمة
 const listDiv = document.getElementById("list");
 
-names.forEach((name, i) => {
+// رسم القائمة
+names.forEach((name,i)=>{
     listDiv.innerHTML += `
-        <div class="name" data-name="${name}">
-            <span>${name}</span>
-            <input type="checkbox" id="n${i}">
-        </div>
-    `;
+    <div class="name" data-name="${name}">
+        <span>${name}</span>
+        <input type="checkbox" id="n${i}">
+    </div>`;
 });
 
-// البحث
+// بحث
 function filterNames(){
-    const searchValue = document.getElementById("searchInput").value.toLowerCase();
-    const items = document.querySelectorAll(".name");
-
-    items.forEach(item => {
-        const name = item.getAttribute("data-name").toLowerCase();
-
-        if(name.includes(searchValue)){
-            item.style.display = "flex";
-        } else {
-            item.style.display = "none";
-        }
+    let v = document.getElementById("searchInput").value.toLowerCase();
+    document.querySelectorAll(".name").forEach(item=>{
+        let name = item.dataset.name.toLowerCase();
+        item.style.display = name.includes(v) ? "flex":"none";
     });
 }
 
-// عرض الحضور
-function showPresent(){
-    const ul = document.getElementById("presentList");
-    ul.innerHTML = "";
+// إحصائيات
+let stats = JSON.parse(localStorage.getItem("stats")) || {};
 
-    names.forEach((name, i) => {
-        if(document.getElementById("n"+i).checked){
+// عرض الحضور + تسجيل
+function showPresent(){
+    let ul = document.getElementById("presentList");
+    ul.innerHTML="";
+
+    names.forEach((name,i)=>{
+        let checked = document.getElementById("n"+i).checked;
+
+        if(!stats[name]) stats[name]={p:0,a:0};
+
+        if(checked){
             ul.innerHTML += `<li>${name}</li>`;
+            stats[name].p++;
+        } else {
+            stats[name].a++;
         }
     });
 
-    document.getElementById("presentBox").style.display = "block";
-    document.getElementById("absentBox").style.display = "none";
+    localStorage.setItem("stats",JSON.stringify(stats));
+
+    showBox("presentBox");
 }
 
 // عرض الغياب
 function showAbsent(){
-    const ul = document.getElementById("absentList");
-    ul.innerHTML = "";
+    let ul = document.getElementById("absentList");
+    ul.innerHTML="";
 
-    names.forEach((name, i) => {
+    names.forEach((name,i)=>{
         if(!document.getElementById("n"+i).checked){
             ul.innerHTML += `<li>${name}</li>`;
         }
     });
 
-    document.getElementById("absentBox").style.display = "block";
-    document.getElementById("presentBox").style.display = "none";
+    showBox("absentBox");
 }
+
+// عرض الإحصائيات
+function showStats(){
+    let ul = document.getElementById("statsList");
+    ul.innerHTML="";
+
+    for(let name in stats){
+        let p = stats[name].p;
+        let a = stats[name].a;
+        let total = p+a;
+        let percent = total ? Math.round(p/total*100):0;
+
+        ul.innerHTML += `
+        <li>
+        <b>${name}</b><br>
+        حضور: ${p} | غياب: ${a} | ${percent}%
+        </li>`;
+    }
+
+    showBox("statsBox");
+}
+
+// إظهار box واحد
+function showBox(id){
+    document.querySelectorAll(".box").forEach(b=>b.style.display="none");
+    document.getElementById(id).style.display="block";
+}
+
 </script>
 
 </body>
